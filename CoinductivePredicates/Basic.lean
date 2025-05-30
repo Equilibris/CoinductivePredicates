@@ -12,6 +12,8 @@ open Parser.Term (namedArgument)
 open PrettyPrinter (delab)
 open Lean.Parser.Command
 
+initialize registerTraceClass `Elab.coinductive
+
 namespace Coind
 
 /-- Generates the underlaying inveriant for the GUB -/
@@ -41,6 +43,8 @@ def generateIs
     abbrev $(topView.shortDeclName ++ `Is |> mkIdent) $(←topView.binders.mapM binderViewtoBracketedBinder)* (R : $(topView.type)) : Prop :=
       ∀ { $argArr* }, R $argArr* → $(mkIdent id) $(topView.binders.map (⟨·.id⟩))* R $argArr*)
 
+  trace[Elab.coinductive] invariant
+  trace[Elab.coinductive] stx
   Elab.Command.elabCommand invariant
   Elab.Command.elabCommand stx
 
@@ -118,6 +122,8 @@ def elabData : CommandElab := fun stx => do
   let stx ← `(
     def $(view.shortDeclName |> mkIdent) $(←view.binders.mapM binderViewtoBracketedBinder)* : $(view.type) :=
       fun $argArr* => ∃ R, @$(view.shortDeclName ++ `Is |> mkIdent) $(view.binders.map (⟨·.id⟩)):ident* R ∧ R $argArr* )
+
+  trace[Elab.coinductive] stx
   Elab.Command.elabCommand stx
 end Coind
 

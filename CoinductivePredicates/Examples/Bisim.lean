@@ -1,5 +1,7 @@
 import CoinductivePredicates.Basic
 
+set_option trace.Elab.coinductive true
+
 namespace Test
 
 structure FSM where
