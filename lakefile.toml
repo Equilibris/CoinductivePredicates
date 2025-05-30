@@ -1,0 +1,10 @@
+name = "CoinductivePredicates"
+version = "0.1.0"
+defaultTargets = ["coinductivepredicates"]
+
+[[lean_lib]]
+name = "CoinductivePredicates"
+
+[[lean_exe]]
+name = "coinductivepredicates"
+root = "Main"
