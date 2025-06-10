@@ -40,7 +40,7 @@ theorem bisim_symm (h : Bisim f a b): Bisim f b a := by
   intro a b holds
   specialize relIsBisim holds
   rcases relIsBisim with ⟨iff, v⟩
-  exact Bisim.Invariant.step (id (Iff.symm iff)) fun c => v c
+  exact .step (id (Iff.symm iff)) fun c => v c
 
 theorem Bisim.unfold {f} : Bisim.Is f (Bisim f) := by
   rintro s t ⟨R, h_is, h_Rst⟩
