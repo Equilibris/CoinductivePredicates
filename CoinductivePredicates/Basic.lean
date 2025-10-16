@@ -17,8 +17,11 @@ initialize registerTraceClass `Elab.coinductive
 
 namespace Coind
 
+/- partial def fixArgumentSyntax (topView : CoinductiveView) (val : Term) : Term := -/
+/-   let  -/
+
 /-- Generates the underlaying inveriant for the GUB -/
-def generateInvariant (topView : CoinductiveView) (argArr : Array Ident) : CommandElabM Ident := do
+def generateInvariant (topView : CoinductiveView) : CommandElabM Ident := do
   let id := topView.shortDeclName ++ `Invariant
 
   let v : Array (TSyntax ``ctor) ← topView.ctors.mapM $ handleCtor id
@@ -112,7 +115,7 @@ def elabData : CommandElab := fun stx => do
   let isId   := view.shortDeclName ++ `Is |> mkIdent
   let predId := view.shortDeclName |> mkIdent
 
-  let id ← generateInvariant view argIds
+  let id ← generateInvariant view
   let id ← generateIs   id isId   type argIds binders relBinderNames
   let _  ← generatePred id predId type argIds binders relBinderNames
 

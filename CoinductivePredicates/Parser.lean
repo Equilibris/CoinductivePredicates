@@ -51,7 +51,7 @@ def CtorView.ofStx (declName : Name) (modifiers : Modifiers) (ref : Syntax) : Co
   if let some leadingDocComment := ref[0].getOptional? then
     if ctorModifiers.docString?.isSome then
       logErrorAt leadingDocComment "duplicate doc string"
-    ctorModifiers := { ctorModifiers with docString? := .some ⟨leadingDocComment⟩ }
+    ctorModifiers := { ctorModifiers with docString? := .some ⟨⟨leadingDocComment⟩, true⟩ }
   if ctorModifiers.isPrivate && modifiers.isPrivate then
     throwError "invalid 'private' constructor in a 'private' inductive datatype"
   if ctorModifiers.isProtected && modifiers.isPrivate then
@@ -60,9 +60,10 @@ def CtorView.ofStx (declName : Name) (modifiers : Modifiers) (ref : Syntax) : Co
   checkValidCtorModifier ctorModifiers
   let ctorName := ref.getIdAt 3
   let ctorName := declName ++ ctorName
-  let ctorName ← withRef ref[3] $ Elab.applyVisibility ctorModifiers.visibility ctorName
+  let ctorName ← withRef ref[3] $ Elab.applyVisibility ctorModifiers ctorName
   let (binders, type?) := Elab.expandOptDeclSig ref[4]
-  addDocString' ctorName ctorModifiers.docString?
+  -- TODO
+  /- addDocString' ctorName ctorModifiers.docString? -/
 
   -- TODO: Check this is correctly updated
   Elab.addDeclarationRangesFromSyntax ctorName ref ref[3]
@@ -82,7 +83,12 @@ def ofStx (stx : Syntax) : CommandElabM CoinductiveView := do
   let currNamespace ← getCurrNamespace
   let currLevelNames ← getLevelNames
   let declId : TSyntax ``Command.declId := ⟨decl[1]⟩
-  let ⟨shortDeclName, declName, levelNames⟩ ← expandDeclId currNamespace currLevelNames declId modifiers
+  let {
+    shortName := shortDeclName,
+    declName,
+    levelNames,
+    docString? := _
+  } ← Elab.Command.liftTermElabM $ expandDeclId currNamespace currLevelNames declId modifiers
 
   let ctors ← decl[4].getArgs.mapM $ CtorView.ofStx declName modifiers
 
