@@ -13,7 +13,7 @@ open Parser.Term (namedArgument)
 open PrettyPrinter (delab)
 open Lean.Parser.Command
 
-initialize registerTraceClass `Elab.coinductive
+/- initialize registerTraceClass `Elab.coinductive -/
 
 namespace Coind
 
